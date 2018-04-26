@@ -1,7 +1,6 @@
 '''
 爬取豆瓣电影top 100排行，并存储到mongodb
 '''
-from collections import deque
 from requests_html import HTMLSession
 
 import pymongo
@@ -35,7 +34,7 @@ class Top100Spider:
     def _get_movies_info(self):
         # self._get_content()
         movie_table = self.content.html.find('#content > div > div.article > div:nth-child(3) > table > tr > td:nth-child(2) > div')
-        #print(movie_table)
+        # print(movie_table)
 
         for movie in movie_table:
             info = {}
@@ -45,7 +44,7 @@ class Top100Spider:
             info['score'] = movie.find('div > span.rating_nums', first=True).text
             self.pack.append(info)
             self.collections.insert(info)
-    
+
     def spider_top100(self):
         self._start_craw()
         for url in self.page_url:
@@ -60,10 +59,6 @@ class Top100Spider:
 if __name__ == "__main__":
     url = 'https://movie.douban.com/tag/Top100'
     spider = Top100Spider(url)
-    #spider.get_movies_info()
+    # spider.get_movies_info()
     spider.spider_top100()
-    #spider.print_top100_movies()
-    
-
-    
-
+    # spider.print_top100_movies()

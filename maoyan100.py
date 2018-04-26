@@ -4,23 +4,23 @@
 from requests_html import HTMLSession
 import pymongo
 
+
 class Top100:
     def __init__(self):
-        self.urls = ['http://maoyan.com/board/4?offset={0}'.format(i*10) for i in range(10)]
+        self.urls = ['http://maoyan.com/board/4?offset={0}'.format(i * 10) for i in range(10)]
         self.client = pymongo.MongoClient('localhost', port=27017)
         self.db = self.client['top100']
         self.collections = self.db['maoyan']
 
     def get_page_content(self, url):
         try:
-            #print('#####url is @', url)
+            # print('#####url is @', url)
             session = HTMLSession()
             self.response = session.get(url)
             self.parse_url_content()
         except Exception as e:
             print(e)
             pass
-
 
     def parse_url_content(self):
         info = {}
@@ -31,10 +31,10 @@ class Top100:
             info['url'] = 'http://maoyan.com{0}'.format(movie.find('div > div > div.movie-item-info > p > a', first=True).attrs['href'])
             info['actor'] = movie.find('div > div > div.movie-item-info > p.star', first=True).text
             info['releasetime'] = movie.find('div > div > div.movie-item-info > p.releasetime', first=True).text
-            info['score'] = movie.find('div > div > div.movie-item-number.score-num > p > i.integer', first=True).text+movie.find('div > div > div.movie-item-number.score-num > p > i.fraction', first=True).text
-            #self.collections.insert(info)
+            info['score'] = movie.find('div > div > div.movie-item-number.score-num > p > i.integer', first=True).text + movie.find('div > div > div.movie-item-number.score-num > p > i.fraction', first=True).text
+            # self.collections.insert(info)
             self.write_to_database(info)
-            #print(info)
+            # print(info)
 
     def write_to_database(self, info):
         try:
